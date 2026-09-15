@@ -1,0 +1,15 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Build started"
+      - echo "Testing web application files"
+      - test -f index.html
+      - test -f style.css
+      - echo "Build completed successfully"
+
+artifacts:
+  files:
+    - index.html
+    - style.css
