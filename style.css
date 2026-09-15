@@ -32,3 +32,8 @@ p {
     border-radius: 5px;
     background: #e8f5e9;
 }
+.version {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
