@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy Student Placement Assistant
 
 on:
   push:
@@ -6,22 +6,51 @@ on:
       - main
 
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+
+      - name: Checkout source code
         uses: actions/checkout@v4
+
 
       - name: Setup SSH
         run: |
+
           mkdir -p ~/.ssh
+
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+
           chmod 600 ~/.ssh/id_ed25519
+
           ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Deploy website
+
+      - name: Deploy application to AWS EC2
         run: |
-          scp -i ~/.ssh/id_ed25519 index.html style.css ec2-user@${{ secrets.EC2_HOST }}:/tmp/
-          ssh -i ~/.ssh/id_ed25519 ec2-user@${{ secrets.EC2_HOST }} \
-            'sudo cp /tmp/index.html /tmp/style.css /var/www/html/ && sudo systemctl restart httpd'
+
+          scp -i ~/.ssh/id_ed25519 \
+            index.html \
+            style.css \
+            script.js \
+            ec2-user@${{ secrets.EC2_HOST }}:/tmp/
+
+
+      - name: Install files on Apache
+        run: |
+
+          ssh -i ~/.ssh/id_ed25519 \
+            ec2-user@${{ secrets.EC2_HOST }} \
+            'sudo cp /tmp/index.html /tmp/style.css /tmp/script.js /var/www/html/ && sudo systemctl restart httpd'
+
+
+      - name: Deployment completed
+        run: |
+
+          echo "Student Placement Assistant deployed successfully!"
+          echo "Server: AWS EC2"
+          echo "Web Server: Apache"
+          echo "CI/CD: GitHub Actions"
